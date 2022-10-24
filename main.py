@@ -1,8 +1,43 @@
+assertList = [[{"id": 1, "parent": "root"}, {"id": 2, "parent": 1, "type": "test"},
+                 {"id": 3, "parent": 1, "type": "test"}, {"id": 4, "parent": 2, "type": "test"},
+                 {"id": 5, "parent": 2, "type": "test"}, {"id": 6, "parent": 2, "type": "test"},
+                 {"id": 7, "parent": 4, "type": None}, {"id": 8, "parent": 4, "type": None}],
+              {"id": 7, "parent": 4, "type": None},
+              [{"id": 7, "parent": 4, "type": None}, {"id": 8, "parent": 4, "type": None}],
+              [],
+              [{"id": 4, "parent": 2, "type": "test"}, {"id": 2, "parent": 1, "type": "test"},
+               {"id": 1, "parent": "root"}]
+              ]
+
+
 class TreeStore:
-    pass
+
+    def __init__(self, items):
+        self.items = items
+        self.index = {}
+        for item in items:
+            self.index[item['id']] = item
+
+    def getAll(self):
+        return self.items
+
+    def getItem(self, id_):
+        return self.index[id_]
+
+    def getChildren(self):
+        pass
+
+    def getAllParents(self, id_):
+        current_id = self.index[id_]['parent']
+        chain = []
+        while current_id != 'root':
+            chain.append(self.index[current_id])
+            current_id = self.index[current_id]['parent']
+        return chain
 
 
-items = [
+
+itemss = [
     {"id": 1, "parent": "root"},
     {"id": 2, "parent": 1, "type": "test"},
     {"id": 3, "parent": 1, "type": "test"},
@@ -12,14 +47,20 @@ items = [
     {"id": 7, "parent": 4, "type": None},
     {"id": 8, "parent": 4, "type": None}
 ]
-ts = TreeStore(items)
+ts = TreeStore(itemss)
+print(ts.getAllParents(7))
 
-# Примеры использования:
-#  - ts.getAll() // [{"id":1,"parent":"root"},{"id":2,"parent":1,"type":"test"},{"id":3,"parent":1,"type":"test"},{"id":4,"parent":2,"type":"test"},{"id":5,"parent":2,"type":"test"},{"id":6,"parent":2,"type":"test"},{"id":7,"parent":4,"type":None},{"id":8,"parent":4,"type":None}]
-#
-#  - ts.getItem(7) // {"id":7,"parent":4,"type":None}
-#
-#  - ts.getChildren(4) // [{"id":7,"parent":4,"type":None},{"id":8,"parent":4,"type":None}]
-#  - ts.getChildren(5) // []
-#
-#  - ts.getAllParents(7) // [{"id":4,"parent":2,"type":"test"},{"id":2,"parent":1,"type":"test"},{"id":1,"parent":"root"}]
+assert ts.getAll() == assertList[0]
+print('1:👍')
+assert ts.getItem(7) == assertList[1]
+print('2:👍')
+assert ts.getChildren(4) == assertList[2]
+print('3:👍')
+assert ts.getChildren(4) == assertList[3]
+print('4:👍')
+assert ts.getAllParents(7) == assertList[4]
+print('5:👍')
+
+
+
+
