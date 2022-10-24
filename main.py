@@ -15,7 +15,14 @@ class TreeStore:
     def __init__(self, items):
         self.items = items
         self.index = {}
+        self.indexChildren = {}
         for item in items:
+            parent = item['parent']
+            current = item['id']
+            try:
+                self.indexChildren[parent].extend([current])
+            except KeyError:
+                self.indexChildren[parent] = [current]
             self.index[item['id']] = item
 
     def getAll(self):
@@ -24,8 +31,15 @@ class TreeStore:
     def getItem(self, id_):
         return self.index[id_]
 
-    def getChildren(self):
-        pass
+    def getChildren(self, id_):
+        children = []
+        try:
+            for i in self.indexChildren[id_]:
+                children.append(self.index[i])
+            return children
+        except KeyError:
+            return []
+
 
     def getAllParents(self, id_):
         current_id = self.index[id_]['parent']
@@ -48,7 +62,7 @@ itemss = [
     {"id": 8, "parent": 4, "type": None}
 ]
 ts = TreeStore(itemss)
-print(ts.getAllParents(7))
+print(ts.indexChildren)
 
 assert ts.getAll() == assertList[0]
 print('1:👍')
@@ -56,7 +70,7 @@ assert ts.getItem(7) == assertList[1]
 print('2:👍')
 assert ts.getChildren(4) == assertList[2]
 print('3:👍')
-assert ts.getChildren(4) == assertList[3]
+assert ts.getChildren(5) == assertList[3]
 print('4:👍')
 assert ts.getAllParents(7) == assertList[4]
 print('5:👍')
